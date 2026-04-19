@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 二维码生成</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        header h1 {
+            font-size: 2em;
+            color: #2d5a27;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #666;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #555;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #2d5a27;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+        .btn {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .qrcode-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .url-display {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+        .url-display label {
+            margin-bottom: 5px;
+        }
+        .url-display div {
+            font-family: monospace;
+            color: #333;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">返回首页</a>
+        
+        <header>
+            <h1>管理后台</h1>
+            <p>产品二维码生成</p>
+        </header>
+        
+        <div class="card">
+            <h2>二维码生成器</h2>
+            
+            <div class="form-group">
+                <label for="product-code">产品编码：</label>
+                <input type="text" id="product-code" placeholder="请输入产品编码，例如：4395" value="4395">
+            </div>
+            
+            <button class="btn" onclick="generateQRCode()">生成二维码</button>
+            
+            <div class="qrcode-container">
+                <div id="qrcode"></div>
+            </div>
+            
+            <div class="url-display">
+                <label>产品链接：</label>
+                <div id="product-url">http://139.155.97.74/product/4395</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 农产品溯源系统</p>
+        </footer>
+    </div>
+    
+    <!-- 引入 QRCode.js 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    
+    <script>
+        // 生成二维码
+        function generateQRCode() {
+            const productCode = document.getElementById('product-code').value || '4395';
+            const baseUrl = 'http://139.155.97.74';
+            const productUrl = `${baseUrl}/product/${productCode}`;
+            
+            // 更新产品链接显示
+            document.getElementById('product-url').textContent = productUrl;
+            
+            // 生成二维码
+            const qrcode = document.getElementById('qrcode');
+            qrcode.innerHTML = '';
+            
+            QRCode.toCanvas(qrcode, productUrl, {
+                width: 200,
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#ffffff'
+                }
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+        
+        // 页面加载时生成默认二维码
+        window.onload = generateQRCode;
+    </script>
+</body>
+</html>
