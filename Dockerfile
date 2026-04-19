@@ -1,48 +1,17 @@
-# Build stage
-FROM node:20-alpine AS builder
-
-# Set environment variables
-ENV NODE_ENV=production
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
-RUN npm ci --only=production
-
-# Copy source code
-COPY . .
-
-# Build the application
-RUN npm run build
-
-# Production stage
+# 使用 Nginx 作为基础镜像
 FROM nginx:alpine
 
-# Set maintainer
+# 设置维护者信息
 LABEL maintainer="Agriculture QR Traceability System"
 
-# Install necessary packages
-RUN apk add --no-cache wget
+# 复制静态文件到 Nginx 目录
+COPY . /usr/share/nginx/html
 
-# Copy build files from builder
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Copy nginx configuration
+# 复制 Nginx 配置文件
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Set proper permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html && \ 
-    chmod -R 755 /usr/share/nginx/html
-
-# Expose port
+# 暴露 80 端口
 EXPOSE 80
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \ 
-    CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
-
-# Start nginx
+# 启动 Nginx
 CMD ["nginx", "-g", "daemon off;"]
