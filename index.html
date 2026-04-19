@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>农产品溯源系统</title>
+    <title>农产品二维码溯源系统</title>
     <style>
         * {
             margin: 0;
@@ -11,106 +11,78 @@
             box-sizing: border-box;
         }
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 40px 0;
-        }
-        header h1 {
-            font-size: 2.5em;
-            color: #2d5a27;
-            margin-bottom: 10px;
-        }
-        header p {
-            font-size: 1.2em;
-            color: #5a7a5a;
-        }
-        .card {
+        .container {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 30px;
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card h2 {
-            color: #2d5a27;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-        .btn {
-            display: inline-block;
-            background: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background 0.3s ease;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background: #45a049;
-        }
-        .btn-container {
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px 40px;
+            max-width: 600px;
             text-align: center;
-            margin: 30px 0;
         }
-        .btn + .btn {
-            margin-left: 20px;
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
         }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px 0;
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 32px;
+        }
+        .description {
             color: #666;
-            font-size: 0.9em;
+            font-size: 16px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .link-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        .link-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .link-btn.secondary:hover {
+            background: #e0e0e0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>农产品溯源系统</h1>
-            <p>扫一扫，了解产品详情</p>
-        </header>
-        
-        <div class="card">
-            <h2>系统功能</h2>
-            <p>本系统提供农产品溯源信息查询和二维码生成功能，帮助消费者了解产品的详细信息。</p>
+        <div class="logo">🌱</div>
+        <h1>农产品二维码溯源系统</h1>
+        <p class="description">
+            扫描产品二维码，了解农产品的种植信息、采收质量<br>
+            让每一份农产品都有迹可循
+        </p>
+        <div class="links">
+            <a href="/product/4395" class="link-btn">查看示例产品（枣甜5号）</a>
+            <a href="/admin" class="link-btn secondary">进入管理后台</a>
         </div>
-        
-        <div class="btn-container">
-            <a href="/product/4395" class="btn">查看示例产品</a>
-            <a href="/admin" class="btn">管理后台</a>
-        </div>
-        
-        <div class="card">
-            <h2>使用说明</h2>
-            <ol style="margin-left: 20px; line-height: 1.6;">
-                <li>扫描产品包装上的二维码</li>
-                <li>查看产品的详细信息</li>
-                <li>了解产品的产地、种植时间等信息</li>
-            </ol>
-        </div>
-        
-        <footer>
-            <p>&copy; 2026 农产品溯源系统</p>
-        </footer>
     </div>
 </body>
 </html>

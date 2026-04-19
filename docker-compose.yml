@@ -1,14 +1,37 @@
 version: '3.8'
 
+# 定义网络
+networks:
+  app-network:
+    driver: bridge
+    name: agriculture-qr-network
+
+# 定义服务
 services:
   web:
+    # 服务名称
     container_name: agriculture-qr-app
-    build: .
+    
+    # 构建配置
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    # 端口映射
     ports:
       - "80:80"
+    
+    # 网络配置
+    networks:
+      - app-network
+    
+    # 重启策略
     restart: unless-stopped
+    
+    # 健康检查
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
