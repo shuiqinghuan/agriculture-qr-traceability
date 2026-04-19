@@ -19,30 +19,29 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 # 停止并移除旧容器
-echo "\n[1/5] 停止并移除旧容器..."
+echo "\n[1/3] 停止并移除旧容器..."
 docker-compose down --remove-orphans
 
 # 构建新镜像
-echo "\n[2/5] 构建新镜像..."
+echo "\n[2/3] 构建新镜像..."
 docker-compose build
 
 # 启动容器
-echo "\n[3/5] 启动容器..."
+echo "\n[3/3] 启动容器..."
 docker-compose up -d
 
 # 等待服务启动
-echo "\n[4/5] 等待服务启动..."
+echo "\n等待服务启动..."
 sleep 10
 
 # 检查服务状态
-echo "\n[5/5] 检查服务状态..."
+echo "\n检查服务状态..."
 docker-compose ps
 
 echo "\n===================================="
 echo "部署完成！"
 echo "===================================="
-echo "访问地址: http://localhost"
-echo "或访问: http://$(hostname -I | awk '{print $1}')"
-echo "\n管理后台: http://localhost/admin"
-echo "示例产品: http://localhost/product/4395"
+echo "访问地址: http://139.155.97.74"
+echo "\n管理后台: http://139.155.97.74/admin"
+echo "示例产品: http://139.155.97.74/product/4395"
 echo "===================================="
