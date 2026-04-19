@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品溯源 - 枣甜5号</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        header h1 {
+            font-size: 2em;
+            color: #2d5a27;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #666;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #555;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #2d5a27;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #555;
+        }
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+        .images {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .image-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        .image-item img {
+            width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">返回首页</a>
+        
+        <header>
+            <h1 id="product-name">枣甜5号</h1>
+            <p>产品编码：<span id="product-code">4395</span></p>
+        </header>
+        
+        <div class="card">
+            <h2>基本信息</h2>
+            <div class="info-item">
+                <span class="info-label">品种名称：</span>
+                <span class="info-value" id="variety">枣甜5号</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">定植地点：</span>
+                <span class="info-value" id="location">山东省泰安市岱岳区</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">定植时间：</span>
+                <span class="info-value" id="planting-time">2024年4月15日</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>采收质量信息</h2>
+            <div class="info-item">
+                <span class="info-label">采收时间：</span>
+                <span class="info-value" id="harvest-time">2024年10月1日 - 2024年11月15日</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">糖度：</span>
+                <span class="info-value" id="sugar-content">28.5°</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">重量：</span>
+                <span class="info-value" id="weight">15g</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">口感：</span>
+                <span class="info-value" id="taste">脆甜多汁</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">适应人群：</span>
+                <span class="info-value" id="suitable-for">所有人群，尤其适合儿童和老人</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">品质小结：</span>
+                <span class="info-value" id="summary">枣甜5号是经过多年选育的优良品种，果实饱满，口感极佳。生长过程严格按照绿色食品标准管理，无农药残留，安全健康。</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>产品图片</h2>
+            <div class="images">
+                <div class="image-item">
+                    <img src="https://images.unsplash.com/photo-1544510808-91bcbee1df55?w=800" alt="枣甜5号" />
+                </div>
+                <div class="image-item">
+                    <img src="https://images.unsplash.com/photo-1568702846914-96b305d246c8?w=800" alt="枣甜5号" />
+                </div>
+                <div class="image-item">
+                    <img src="https://images.unsplash.com/photo-1595475207225-428e60ebc13d?w=800" alt="枣甜5号" />
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>&copy; 2026 农产品溯源系统</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 产品数据
+        const products = {
+            '4395': {
+                name: '枣甜5号',
+                code: '4395',
+                variety: '枣甜5号',
+                location: '山东省泰安市岱岳区',
+                plantingTime: '2024年4月15日',
+                harvestTime: '2024年10月1日 - 2024年11月15日',
+                sugarContent: '28.5°',
+                weight: '15g',
+                taste: '脆甜多汁',
+                suitableFor: '所有人群，尤其适合儿童和老人',
+                summary: '枣甜5号是经过多年选育的优良品种，果实饱满，口感极佳。生长过程严格按照绿色食品标准管理，无农药残留，安全健康。'
+            }
+        };
+        
+        // 获取 URL 参数
+        function getProductCode() {
+            const path = window.location.pathname;
+            const parts = path.split('/');
+            return parts[parts.length - 1];
+        }
+        
+        // 加载产品数据
+        function loadProductData() {
+            const code = getProductCode();
+            const product = products[code] || products['4395'];
+            
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-code').textContent = product.code;
+            document.getElementById('variety').textContent = product.variety;
+            document.getElementById('location').textContent = product.location;
+            document.getElementById('planting-time').textContent = product.plantingTime;
+            document.getElementById('harvest-time').textContent = product.harvestTime;
+            document.getElementById('sugar-content').textContent = product.sugarContent;
+            document.getElementById('weight').textContent = product.weight;
+            document.getElementById('taste').textContent = product.taste;
+            document.getElementById('suitable-for').textContent = product.suitableFor;
+            document.getElementById('summary').textContent = product.summary;
+        }
+        
+        // 页面加载时执行
+        window.onload = loadProductData;
+    </script>
+</body>
+</html>
