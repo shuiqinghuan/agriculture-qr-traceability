@@ -5,68 +5,78 @@ import HarvestQuality from '../components/HarvestQuality';
 import InteractionBar from '../components/InteractionBar';
 import { useAntiSpam } from '../hooks/useAntiSpam';
 import { useState, useEffect } from 'react';
-
-// 示例数据 - 在实际应用中，这些数据会从 Convex 获取
-const SAMPLE_PRODUCTS = {
-  '4395': {
-    _id: 'sample_id_4395' as any,
-    code: '4395',
-    name: '枣甜5号',
-    location: '山东省泰安市岱岳区',
-    plantingTime: '2024年4月15日',
-    images: [
-      'https://images.unsplash.com/photo-1544510808-91bcbee1df55?w=800',
-      'https://images.unsplash.com/photo-1568702846914-96b305d246c8?w=800',
-      'https://images.unsplash.com/photo-1595475207225-428e60ebc13d?w=800'
-    ],
-    videos: [],
-    harvestStart: '2024年10月1日',
-    harvestEnd: '2024年11月15日',
-    sugarContent: 28.5,
-    weight: 15,
-    taste: '脆甜多汁',
-    suitableFor: '所有人群，尤其适合儿童和老人',
-    summary: '枣甜5号是经过多年选育的优良品种，果实饱满，口感极佳。生长过程严格按照绿色食品标准管理，无农药残留，安全健康。',
-    likes: 128,
-    shares: 45,
-    favorites: 67
-  }
-};
+import { getProductByCode, userInteraction, Product } from '../services/api';
 
 export default function ProductPage() {
   const { productCode } = useParams<{ productCode: string }>();
-  const { deviceId, userAgent, ipAddress } = useAntiSpam();
-  const [product, setProduct] = useState<any>(null);
+  const { deviceId } = useAntiSpam();
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 模拟从 Convex 获取数据
-    if (productCode && SAMPLE_PRODUCTS[productCode as keyof typeof SAMPLE_PRODUCTS]) {
-      setTimeout(() => {
-        setProduct(SAMPLE_PRODUCTS[productCode as keyof typeof SAMPLE_PRODUCTS]);
+    const fetchProduct = async () => {
+      if (!productCode) {
         setLoading(false);
-      }, 500);
-    } else {
-      setLoading(false);
-    }
+        setError('产品编码不能为空');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getProductByCode(productCode);
+        // 转换字段名以匹配组件期望的格式
+        const formattedProduct = {
+          ...data,
+          plantingTime: data.planting_time,
+          harvestStart: data.harvest_start,
+          harvestEnd: data.harvest_end,
+          sugarContent: data.sugar_content,
+          suitableFor: data.suitable_for,
+          images: data.images.map((img: any) => img.image_url),
+          videos: data.videos.map((video: any) => video.video_url)
+        };
+        setProduct(formattedProduct as Product);
+      } catch (err) {
+        setError('获取产品信息失败');
+        console.error('获取产品信息出错:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
   }, [productCode]);
 
   const handleLike = async () => {
-    if (!product) return;
-    // 在实际应用中，这里会调用 Convex mutation
-    setProduct(prev => ({ ...prev, likes: prev.likes + 1 }));
+    if (!product || !productCode) return;
+    try {
+      const result = await userInteraction(productCode, 'like', deviceId);
+      setProduct(prev => prev ? { ...prev, likes: result.count } : null);
+    } catch (err) {
+      console.error('点赞失败:', err);
+    }
   };
 
   const handleShare = async () => {
-    if (!product) return;
-    // 在实际应用中，这里会调用 Convex mutation
-    setProduct(prev => ({ ...prev, shares: prev.shares + 1 }));
+    if (!product || !productCode) return;
+    try {
+      const result = await userInteraction(productCode, 'share', deviceId);
+      setProduct(prev => prev ? { ...prev, shares: result.count } : null);
+    } catch (err) {
+      console.error('分享失败:', err);
+    }
   };
 
   const handleFavorite = async () => {
-    if (!product) return;
-    // 在实际应用中，这里会调用 Convex mutation
-    setProduct(prev => ({ ...prev, favorites: prev.favorites + 1 }));
+    if (!product || !productCode) return;
+    try {
+      const result = await userInteraction(productCode, 'favorite', deviceId);
+      setProduct(prev => prev ? { ...prev, favorites: result.count } : null);
+    } catch (err) {
+      console.error('收藏失败:', err);
+    }
   };
 
   if (loading) {
@@ -77,11 +87,11 @@ export default function ProductPage() {
     );
   }
 
-  if (!product) {
+  if (error || !product) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">产品未找到</h2>
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">{error || '产品未找到'}</h2>
           <p className="text-gray-500">请检查产品编码是否正确</p>
         </div>
       </div>
@@ -94,22 +104,22 @@ export default function ProductPage() {
         <ProductInfo 
           name={product.name}
           location={product.location}
-          plantingTime={product.plantingTime}
+          plantingTime={(product as any).plantingTime}
           code={product.code}
         />
         
         <MediaGallery 
-          images={product.images}
-          videos={product.videos}
+          images={(product as any).images}
+          videos={(product as any).videos}
         />
         
         <HarvestQuality 
-          harvestStart={product.harvestStart}
-          harvestEnd={product.harvestEnd}
-          sugarContent={product.sugarContent}
+          harvestStart={(product as any).harvestStart}
+          harvestEnd={(product as any).harvestEnd}
+          sugarContent={product.sugar_content}
           weight={product.weight}
           taste={product.taste}
-          suitableFor={product.suitableFor}
+          suitableFor={product.suitable_for}
           summary={product.summary}
         />
       </div>
