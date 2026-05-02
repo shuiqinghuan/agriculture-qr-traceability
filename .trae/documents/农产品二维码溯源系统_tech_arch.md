@@ -4,50 +4,69 @@ graph TB
     subgraph "前端层"
         A[React 应用]
         B[产品溯源页面]
-        C[二维码生成器]
+        C[管理后台]
+    end
+    
+    subgraph "反向代理层"
+        D[Nginx]
     end
     
     subgraph "后端层"
-        D[Convex 函数]
-        E[数据查询]
-        F[防刷逻辑]
+        E[Django + Gunicorn]
+        F[产品查询 API]
+        G[交互处理 API]
+        H[防刷逻辑]
     end
     
     subgraph "数据层"
-        G[Convex 数据库]
-        H[产品表]
-        I[交互记录表]
+        I[PostgreSQL 15]
+        J[产品表]
+        K[图片表]
+        L[视频表]
+        M[交互记录表]
     end
     
     subgraph "部署层"
-        J[Docker 容器]
-        K[云服务器]
+        N[Docker 容器]
+        O[云服务器]
     end
     
     A --> D
     B --> A
     C --> A
-    D --> G
-    E --> H
+    D --> E
     E --> I
-    F --> I
-    G --> J
-    J --> K
+    F --> J
+    F --> K
+    F --> L
+    G --> M
+    H --> M
+    I --> N
+    N --> O
 ```
 
 ## 2. 技术栈
-- **前端**：React@18 + TypeScript + Tailwind CSS + Vite
-- **后端**：Convex（Serverless Backend）
-- **数据库**：Convex Database
-- **部署**：Docker + 云服务器
+- **前端**：React@18 + TypeScript + Tailwind CSS + Vite + React Router 7
+- **后端**：Django 6.0.4 + Django REST Framework + Gunicorn
+- **数据库**：PostgreSQL 15
+- **反向代理**：Nginx
+- **部署**：Docker + Docker Compose
 - **二维码**：qrcode.react
 - **图标**：lucide-react
 
 ## 3. 路由定义
 | 路由 | 用途 |
 |-----|------|
+| / | 首页 |
 | /product/:productCode | 产品溯源页面，根据产品编码展示信息 |
-| /admin/qrcode | 二维码生成管理页面（可选） |
+| /admin | 管理后台 |
+
+### 后端 API 路由
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| /api/products/ | GET | 获取产品列表 |
+| /api/products/{code}/ | GET | 获取产品详情 |
+| /api/interactions/ | POST | 提交用户交互（点赞/分享/收藏） |
 
 ## 4. 数据模型
 
@@ -55,80 +74,116 @@ graph TB
 ```mermaid
 erDiagram
     PRODUCT {
-        string id PK "产品ID"
+        int id PK "产品ID"
         string code UK "产品编码 (如4395)"
-        string name "品种名"
+        string name "产品名称"
         string location "定植地点"
-        string plantingTime "定植时间"
-        json images "图片列表"
-        json videos "视频列表"
-        string harvestStart "采收起始时间"
-        string harvestEnd "采收终止时间"
-        float sugarContent "糖度"
-        float weight "重量"
-        string taste "口感"
-        string suitableFor "适应人群"
-        string summary "品质小结"
+        date planting_time "定植时间"
+        date harvest_start "采收起始时间"
+        date harvest_end "采收终止时间"
+        float sugar_content "糖度"
+        float weight "单果重量(g)"
+        string taste "口感描述"
+        string suitable_for "适应人群"
+        text summary "品质小结"
         int likes "点赞数"
         int shares "转发数"
         int favorites "收藏数"
+        datetime created_at "创建时间"
+        datetime updated_at "更新时间"
     }
     
-    INTERACTION {
-        string id PK "记录ID"
-        string productId FK "产品ID"
-        string type "交互类型 (like/share/favorite)"
-        string ipAddress "IP地址"
-        string userAgent "用户代理"
-        string deviceId "设备标识"
-        datetime timestamp "时间戳"
+    PRODUCT_IMAGE {
+        int id PK "图片ID"
+        int product_id FK "产品ID"
+        string image_url "图片URL"
+        int order "排序"
     }
+    
+    PRODUCT_VIDEO {
+        int id PK "视频ID"
+        int product_id FK "产品ID"
+        string video_url "视频URL"
+        int order "排序"
+    }
+    
+    USER_INTERACTION {
+        int id PK "记录ID"
+        int product_id FK "产品ID"
+        string action "交互类型 (like/share/favorite)"
+        string device_id "设备标识"
+        string user_agent "用户代理"
+        string ip_address "IP地址"
+        datetime created_at "时间戳"
+    }
+    
+    PRODUCT ||--o{ PRODUCT_IMAGE : "has"
+    PRODUCT ||--o{ PRODUCT_VIDEO : "has"
+    PRODUCT ||--o{ USER_INTERACTION : "receives"
 ```
 
-### 4.2 Convex Schema
-```typescript
-// convex/schema.ts
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+### 4.2 Django 模型
 
-export default defineSchema({
-  products: defineTable({
-    code: v.string(),
-    name: v.string(),
-    location: v.string(),
-    plantingTime: v.string(),
-    images: v.array(v.string()),
-    videos: v.array(v.string()),
-    harvestStart: v.string(),
-    harvestEnd: v.string(),
-    sugarContent: v.number(),
-    weight: v.number(),
-    taste: v.string(),
-    suitableFor: v.string(),
-    summary: v.string(),
-    likes: v.number(),
-    shares: v.number(),
-    favorites: v.number(),
-  }).index("by_code", ["code"]),
+```python
+# backend/products/models.py
+from django.db import models
 
-  interactions: defineTable({
-    productId: v.id("products"),
-    type: v.union(v.literal("like"), v.literal("share"), v.literal("favorite")),
-    ipAddress: v.string(),
-    userAgent: v.string(),
-    deviceId: v.string(),
-    timestamp: v.number(),
-  }).index("by_product_and_type", ["productId", "type"]),
-});
+class Product(models.Model):
+    """产品模型"""
+    code = models.CharField(max_length=20, unique=True, verbose_name="产品编码")
+    name = models.CharField(max_length=100, verbose_name="产品名称")
+    location = models.CharField(max_length=200, verbose_name="定植地点")
+    planting_time = models.DateField(verbose_name="定植时间")
+    harvest_start = models.DateField(verbose_name="采收开始时间")
+    harvest_end = models.DateField(verbose_name="采收结束时间")
+    sugar_content = models.FloatField(verbose_name="糖度")
+    weight = models.FloatField(verbose_name="单果重量(g)")
+    taste = models.CharField(max_length=100, verbose_name="口感描述")
+    suitable_for = models.CharField(max_length=200, verbose_name="适应人群")
+    summary = models.TextField(verbose_name="品质小结")
+    likes = models.IntegerField(default=0, verbose_name="点赞数")
+    shares = models.IntegerField(default=0, verbose_name="分享数")
+    favorites = models.IntegerField(default=0, verbose_name="收藏数")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+
+class ProductImage(models.Model):
+    """产品图片模型"""
+    product = models.ForeignKey(Product, related_name="images", on_delete=models.CASCADE)
+    image_url = models.URLField(max_length=500, verbose_name="图片URL")
+    order = models.IntegerField(default=0, verbose_name="排序")
+
+class ProductVideo(models.Model):
+    """产品视频模型"""
+    product = models.ForeignKey(Product, related_name="videos", on_delete=models.CASCADE)
+    video_url = models.URLField(max_length=500, verbose_name="视频URL")
+    order = models.IntegerField(default=0, verbose_name="排序")
+
+class UserInteraction(models.Model):
+    """用户交互模型（防刷）"""
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    action = models.CharField(max_length=20, choices=[
+        ('like', '点赞'),
+        ('share', '分享'),
+        ('favorite', '收藏')
+    ])
+    device_id = models.CharField(max_length=100, verbose_name="设备ID")
+    user_agent = models.CharField(max_length=500, verbose_name="用户代理")
+    ip_address = models.CharField(max_length=50, verbose_name="IP地址")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="操作时间")
+    
+    class Meta:
+        unique_together = ['product', 'action', 'device_id']  # 防止同一设备重复操作
 ```
 
 ## 5. 防刷机制设计
-1. **IP限制**：同一IP在5分钟内最多点赞/收藏3次
-2. **设备指纹**：使用localStorage存储设备标识
-3. **时间窗口**：记录每次操作时间，限制频率
-4. **数据库验证**：后端查询验证操作合法性
+1. **设备指纹**：使用 localStorage 存储设备标识
+2. **数据库唯一约束**：同一设备对同一产品的同一操作只能执行一次
+3. **IP 记录**：记录每次操作的 IP 地址，便于后续分析
+4. **前端频率限制**：防止频繁点击
 
 ## 6. Docker 配置
-- 基础镜像：node:20-alpine
-- 多阶段构建：构建层 + 运行层
-- 暴露端口：前端 5173，Convex 本地开发端口
+- **应用容器**：多阶段构建（node:20-alpine + python:3.11-slim）
+- **数据库容器**：postgres:15-alpine
+- **反向代理**：nginx:alpine
+- **暴露端口**：80（HTTP），内部 8000（Django）
