@@ -22,3 +22,6 @@
 [0502/155403.775:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder
 [0502/155405.207:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder
 [0502/155450.996:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder
+[0502/160546.129:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder
+[0502/160547.071:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder
+[0502/160551.766:INFO:gin\isolate_holder.cc:165] SetPartitionAllocOomCallback and RegisterIsolateHolder

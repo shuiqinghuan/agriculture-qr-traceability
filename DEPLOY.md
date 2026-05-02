@@ -57,16 +57,16 @@ python3 -c 'from django.core.management.utils import get_random_secret_key; prin
 
 ```bash
 # 构建 Docker 镜像
-docker-compose build
+docker compose build
 
 # 启动服务
-docker-compose up -d
+docker compose up -d
 
 # 查看服务状态
-docker-compose ps
+docker compose ps
 
 # 查看日志
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### 4. 验证部署
@@ -81,35 +81,35 @@ docker-compose logs -f
 
 ```bash
 # 查看容器状态
-docker-compose ps
+docker compose ps
 
 # 查看日志
-docker-compose logs -f app
-docker-compose logs -f db
+docker compose logs -f app
+docker compose logs -f db
 
 # 重启服务
-docker-compose restart
+docker compose restart
 
 # 停止服务
-docker-compose down
+docker compose down
 
 # 停止服务并删除数据卷（谨慎操作！）
-docker-compose down -v
+docker compose down -v
 
 # 重新构建并启动
-docker-compose up -d --build
+docker compose up -d --build
 
 # 进入应用容器
-docker-compose exec app sh
+docker compose exec app sh
 
 # 手动运行数据库迁移
-docker-compose exec app python manage.py migrate
+docker compose exec app python manage.py migrate
 
 # 手动生成示例数据
-docker-compose exec app python generate_sample_data.py
+docker compose exec app python generate_sample_data.py
 
 # 创建 Django 超级用户
-docker-compose exec app python manage.py createsuperuser
+docker compose exec app python manage.py createsuperuser
 ```
 
 ## 故障排查
@@ -121,8 +121,8 @@ docker-compose exec app python manage.py createsuperuser
 ### 问题2: 数据库连接失败
 
 检查：
-- 数据库容器是否正常启动: `docker-compose ps`
-- 数据库日志: `docker-compose logs db`
+- 数据库容器是否正常启动: `docker compose ps`
+- 数据库日志: `docker compose logs db`
 - 环境变量配置是否正确
 
 ### 问题3: API 请求失败
@@ -135,7 +135,7 @@ docker-compose exec app python manage.py createsuperuser
 ### 问题4: 静态资源 404
 
 检查：
-- 前端构建是否成功: `docker-compose logs app` 查看构建阶段
+- 前端构建是否成功: `docker compose logs app` 查看构建阶段
 - Nginx 配置中的 root 路径是否正确
 
 ## 安全建议
@@ -150,8 +150,8 @@ docker-compose exec app python manage.py createsuperuser
 
 ```bash
 # 备份数据库
-docker-compose exec db pg_dump -U admin agriculture_qr > backup.sql
+docker compose exec db pg_dump -U admin agriculture_qr > backup.sql
 
 # 恢复数据库
-docker-compose exec -T db psql -U admin agriculture_qr < backup.sql
+docker compose exec -T db psql -U admin agriculture_qr < backup.sql
 ```

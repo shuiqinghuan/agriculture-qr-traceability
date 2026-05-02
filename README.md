@@ -110,13 +110,13 @@ DEBUG=False
 
 ```bash
 # 构建镜像并启动服务
-docker-compose up -d --build
+docker compose up -d --build
 
 # 查看容器状态
-docker-compose ps
+docker compose ps
 
 # 查看日志
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### 4. 初始化数据库
@@ -125,10 +125,10 @@ docker-compose logs -f
 
 ```bash
 # 进入容器执行迁移
-docker-compose exec app python manage.py migrate
+docker compose exec app python manage.py migrate
 
 # 生成示例数据
-docker-compose exec app python generate_sample_data.py
+docker compose exec app python generate_sample_data.py
 ```
 
 ### 5. 访问应用
@@ -373,14 +373,14 @@ environment:
 
 ```bash
 # 查看容器日志
-docker-compose logs -f app
+docker compose logs -f app
 
 # 重启容器
-docker-compose restart
+docker compose restart
 
 # 重新构建
-docker-compose down
-docker-compose up -d --build
+docker compose down
+docker compose up -d --build
 ```
 
 ### 数据库连接问题
