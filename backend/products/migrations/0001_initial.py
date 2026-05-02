@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('planting_time', models.DateField(verbose_name='定植时间')),
                 ('harvest_start', models.DateField(verbose_name='采收开始时间')),
                 ('harvest_end', models.DateField(verbose_name='采收结束时间')),
-                ('sugar_content', models.FloatField(verbose_name='糖度')),
+                ('sugar_content', models.CharField(max_length=50, verbose_name='糖度')),
                 ('weight', models.FloatField(verbose_name='单果重量(g)')),
                 ('taste', models.CharField(max_length=100, verbose_name='口感描述')),
                 ('suitable_for', models.CharField(max_length=200, verbose_name='适应人群')),

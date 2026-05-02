@@ -11,7 +11,7 @@ export interface Product {
   planting_time: string;
   harvest_start: string;
   harvest_end: string;
-  sugar_content: number;
+  sugar_content: string;
   weight: number;
   taste: string;
   suitable_for: string;

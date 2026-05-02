@@ -37,7 +37,7 @@ export default function ProductPage() {
           images: data.images.map((img: any) => img.image_url),
           videos: data.videos.map((video: any) => video.video_url)
         };
-        setProduct(formattedProduct as Product);
+        setProduct(formattedProduct as any);
       } catch (err) {
         setError('获取产品信息失败');
         console.error('获取产品信息出错:', err);
@@ -98,36 +98,38 @@ export default function ProductPage() {
     );
   }
 
+  const p = product as any;
+
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       <div className="max-w-lg mx-auto p-4 space-y-4">
         <ProductInfo 
-          name={product.name}
-          location={product.location}
-          plantingTime={(product as any).plantingTime}
-          code={product.code}
+          name={p.name}
+          location={p.location}
+          plantingTime={p.plantingTime}
+          code={p.code}
         />
         
         <MediaGallery 
-          images={(product as any).images}
-          videos={(product as any).videos}
+          images={p.images}
+          videos={p.videos}
         />
         
         <HarvestQuality 
-          harvestStart={(product as any).harvestStart}
-          harvestEnd={(product as any).harvestEnd}
-          sugarContent={product.sugar_content}
-          weight={product.weight}
-          taste={product.taste}
-          suitableFor={product.suitable_for}
-          summary={product.summary}
+          harvestStart={p.harvestStart}
+          harvestEnd={p.harvestEnd}
+          sugarContent={p.sugarContent}
+          weight={p.weight}
+          taste={p.taste}
+          suitableFor={p.suitableFor}
+          summary={p.summary}
         />
       </div>
       
       <InteractionBar 
-        likes={product.likes}
-        shares={product.shares}
-        favorites={product.favorites}
+        likes={p.likes}
+        shares={p.shares}
+        favorites={p.favorites}
         onLike={handleLike}
         onShare={handleShare}
         onFavorite={handleFavorite}

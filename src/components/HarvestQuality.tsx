@@ -3,7 +3,7 @@ import { Droplets, Scale, Smile, Users, FileText } from 'lucide-react';
 interface HarvestQualityProps {
   harvestStart: string;
   harvestEnd: string;
-  sugarContent: number;
+  sugarContent: string;
   weight: number;
   taste: string;
   suitableFor: string;
@@ -37,7 +37,7 @@ export default function HarvestQuality({
             <Droplets className="w-4 h-4" />
             糖度
           </p>
-          <p className="font-semibold text-yellow-800">{sugarContent}°</p>
+          <p className="font-semibold text-yellow-800">{sugarContent}</p>
         </div>
         
         <div className="bg-amber-50 p-4 rounded-xl">
