@@ -15,11 +15,10 @@ FROM python:3.11-alpine AS backend-builder
 WORKDIR /app
 
 COPY backend/ ./backend/
-COPY requirements.txt .
 
 RUN apk add --no-cache gcc musl-dev postgresql-dev
 RUN python3 -m venv /app/venv
-RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN /app/venv/bin/pip install --no-cache-dir -r backend/requirements.txt
 
 # 生产环境阶段
 FROM python:3.11-alpine
