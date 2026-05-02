@@ -1,62 +1,46 @@
-# 定义网络
-networks:
-  app-network:
-    driver: bridge
-    name: agriculture-qr-network
+version: '3.8'
 
-# 定义服务
 services:
-  # PostgreSQL 数据库服务
   db:
     image: postgres:15-alpine
     container_name: agriculture-qr-db
     environment:
-      POSTGRES_DB: agriculture_qr
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password
+      - POSTGRES_DB=agriculture_qr
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d agriculture_qr"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # 应用服务
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: agriculture-qr-app
     ports:
-      - "80:80"
-    env_file:
-      - .env
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: agriculture-qr-app
+    working_dir: /app/backend  # 关键：设置工作目录
     environment:
-      DB_NAME: agriculture_qr
-      DB_USER: admin
-      DB_PASSWORD: password
-      DB_HOST: db
-      DB_PORT: 5432
-      SECRET_KEY: django-insecure-om-s3yc-zltu-x-29ezcu-b5ws-o18-q8691-r-8
-      DEBUG: "False"
+      - DJANGO_SETTINGS_MODULE=config.settings  # 关键：设置 settings 模块
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/agriculture_qr
+      - DEBUG=1
+    ports:
+      - "80:8000"
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - app-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+    volumes:
+      - ./backend:/app/backend
+      - static_volume:/app/backend/static
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+      "
 
-# 定义卷
 volumes:
   postgres_data:
-    name: agriculture-qr-postgres-data
+  static_volume:
