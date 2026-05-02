@@ -35,13 +35,15 @@ services:
     container_name: agriculture-qr-app
     ports:
       - "80:80"
+    env_file:
+      - .env
     environment:
       DB_NAME: ${DB_NAME:-agriculture_qr}
       DB_USER: ${DB_USER:-admin}
       DB_PASSWORD: ${DB_PASSWORD:-password}
       DB_HOST: db
       DB_PORT: 5432
-      SECRET_KEY: ${SECRET_KEY:-django-insecure-om^-)$8_s3yc@zltu+x=29ezcu&=b5ws!7o18!q8691!(1r+$8}
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-om-s3yc-zltu-x-29ezcu-b5ws-o18-q8691-r-8}
       DEBUG: ${DEBUG:-False}
     depends_on:
       db:
