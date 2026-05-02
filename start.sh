@@ -23,7 +23,9 @@ echo "Django 版本: $(python -c 'import django; print(django.get_version())' 2>
 
 # 等待数据库
 echo "等待数据库连接..."
-sleep 5
+until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"; do
+  sleep 2
+done
 
 # 数据库迁移
 echo "运行数据库迁移..."
@@ -34,18 +36,9 @@ python manage.py migrate --noinput
 echo "收集静态文件..."
 python manage.py collectstatic --noinput --clear
 
-# 生成示例数据
-echo "生成示例数据..."
-python manage.py shell << EOF
-import sys
-import os
-os.chdir('/app/backend')
-try:
-    exec(open('generate_sample_data.py').read())
-    print("示例数据生成完成")
-except Exception as e:
-    print(f"生成示例数据出错: {e}", file=sys.stderr)
-EOF
+# 初始化示例数据（仅在数据库为空时）
+echo "检查示例数据..."
+python generate_sample_data.py
 
 # 启动 Nginx（后台）
 echo "启动 Nginx..."

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+__pycache__/
+backend/__pycache__/
+backend/config/__pycache__/
+backend/products/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

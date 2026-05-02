@@ -16,9 +16,9 @@ def create_sample_data():
     """创建示例产品数据"""
     print('开始创建示例数据...')
 
-    # 删除现有数据
-    deleted_count, _ = Product.objects.all().delete()
-    print(f'已删除 {deleted_count} 条现有产品记录')
+    if Product.objects.exists():
+        print('数据库中已存在产品数据，跳过示例数据初始化')
+        return
 
     # 创建示例产品 - 枣甜5号
     product = Product.objects.create(
